@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="l10n_be_codabox_partner" model="res.partner">
+        <field name="name">L10nBeCodabox Company</field>
+        <field name="vat">BE0762460580</field>
+        <field name="street">1234 CodaBox Avenue</field>
+        <field name="city">Brussels</field>
+        <field name="country_id" ref="base.be"/>
+        <field name="zip">1000</field>
+        <field name="phone">+32 123 45 67 89</field>
+        <field name="email">info@company.beexample.com</field>
+        <field name="website">www.l10nbecodaboxcompany.com</field>
+    </record>
+
+    <record id="l10n_be_codabox_company" model="res.company">
+        <field name="name">L10nBeCodabox Company</field>
+        <field name="partner_id" ref="l10n_be_codabox_partner"/>
+        <field name="account_representative_id" ref="l10n_be_codabox_partner"/>
+    </record>
+
+    <function model="res.company" name="_onchange_country_id">
+        <value eval="[ref('l10n_be_codabox_company')]"/>
+    </function>
+
+    <function model="res.users" name="write">
+        <value eval="[ref('base.user_root'), ref('base.user_admin'), ref('base.user_demo')]"/>
+        <value eval="{'company_ids': [(4, ref('l10n_be_codabox_bridge.l10n_be_codabox_company'))]}"/>
+    </function>
+
+    <function model="account.chart.template" name="try_loading">
+        <value eval="[]"/>
+        <value>be_comp</value>
+        <value model="res.company" eval="obj().env.ref('l10n_be_codabox_bridge.l10n_be_codabox_company')"/>
+    </function>
+
+    <record id="l10n_be_codabox_bank" model="res.partner.bank">
+        <field name="acc_number">BE20001000036856</field>
+        <field name="partner_id" ref="l10n_be_codabox_partner"/>
+        <field name="company_id" ref="l10n_be_codabox_company"/>
+    </record>
+
+    <record id="l10n_be_codabox_journal_coda" model="account.journal">
+        <field name='name'>CODA's</field>
+        <field name='company_id' ref="l10n_be_codabox_bridge.l10n_be_codabox_company"/>
+        <field name='type'>bank</field>
+        <field name='code'>CODA</field>
+        <field name='bank_account_id' ref="l10n_be_codabox_bank"/>
+        <field name='bank_statements_source'>l10n_be_codabox</field>
+    </record>
+
+    <record id="l10n_be_codabox_journal_soda" model="account.journal">
+        <field name='name'>SODA's</field>
+        <field name='company_id' ref="l10n_be_codabox_bridge.l10n_be_codabox_company"/>
+        <field name='type'>general</field>
+        <field name='code'>SODA</field>
+    </record>
+
+    <record id="l10n_be_codabox_company" model="res.company">
+        <field name="l10n_be_codabox_fiduciary_vat">BE0762460580</field>
+        <field name="l10n_be_codabox_soda_journal" ref="l10n_be_codabox_journal_soda"/>
+    </record>
+</odoo>
